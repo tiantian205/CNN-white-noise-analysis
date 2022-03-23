@@ -66,4 +66,4 @@ class ModelLe():
         )
 
     def save_model(self, dataset):
-        self.model.save("model_alex_{}.h5".format(dataset))
+        self.model.save("model_le_{}.h5".format(dataset))
