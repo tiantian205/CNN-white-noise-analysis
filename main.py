@@ -9,25 +9,52 @@ from keras.models import load_model
 import matplotlib.pyplot as plt
 import numpy as np
 
-def generate_white_noise(n):
-    return np.random.rand(n, 28, 28)
+
+def generate_white_noise_image(signal, noise):
+    """ generate 1000 white noise images with the given signal percent of signal values and noise
+    percent of randomly generate noise values"""
+    samples_to_predict = []
+    for i in range(0, 1000):    # pick 1000 noise images to generate for time and simplicity
+        f = tf.random.uniform(shape=[28, 28, 1])
+        k = signal * X_test[i] + noise * f
+        tf.reshape(k, (28, 28))
+        samples_to_predict.append(k)
+    samples_to_predict = np.array(samples_to_predict)
+    return samples_to_predict
+
+
+def generate_classification_image(n):
+    """generate the classification image of the given ground truth value n based on the randomly
+    generated white noise images"""
+    white_noise_images = generate_white_noise_image(0.7, 0.3)
+    classification = white_noise_images[0]
+    count = 0
+    for i in range(0, 1000):  # pick 1000 noise images to generate for time and simplicity
+        if np.nanargmax(y_test[i]) == n:
+            if len(classification) == 0:
+                classification = white_noise_images[i]
+            else:
+                classification = classification + white_noise_images[i]
+            count = count + 1
+    classification = tf.divide(classification, tf.constant(count, shape=(28, 28, 1)))
+    return classification
 
 
 if __name__ == '__main__':
-    # Load the image data
+    """comment the next part and uncomment this part to load the mnist dataset"""
     mnist = tf.keras.datasets.mnist
     (X_train, y_train), (X_test, y_test) = mnist.load_data()
 
+    """comment the previous part and uncomment this part to load the fashion mnist dataset"""
     # mnist_fashion = tf.keras.datasets.fashion_mnist
     # (X_train, y_train), (X_test, y_test) = mnist_fashion.load_data()
 
-    # reshape into (batch, height, width, channels)
-    # we have 60000 training images and 10000 testing images
+    """reshape into (batch, height, width, channels)
+    we have 60000 training images and 10000 testing images"""
     X_train = X_train.reshape(60000, 28, 28, 1)
     X_test = X_test.reshape(10000, 28, 28, 1)
 
-    # Normalize to float between 0 and 1
-    # Original pixel values are between 0 and 255
+    """data wrangling with training and testing data"""
     X_train = X_train.astype('float32')
     X_test = X_test.astype('float32')
     X_train = X_train / 255
@@ -37,6 +64,7 @@ if __name__ == '__main__':
     y_train = np_utils.to_categorical(y_train, classes)
     y_test = np_utils.to_categorical(y_test, classes)
 
+    """code used to train each CNN with the MNIST and Fashion MNIST datasets"""
     # m = ModelAlex()
     # # m = ModelLe()
     # m.create_model()
@@ -46,20 +74,30 @@ if __name__ == '__main__':
     # m.train_model(X_train, y_train, X_test, y_test, BATCH_SIZE, EPOCHS)
     # m.save_model("Fashion_MNIST")
 
-    m = load_model("model_le_MNIST.h5")
-    n = 500
-    k = generate_white_noise(n)
-    avg = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    for i in range(0, n):
-        to_predict = k[i]
-        to_predict = np.expand_dims(to_predict, axis=0)
-        res = m.predict(to_predict)
-        # print(res)
-        # print(np.nanargmax(res))
-        p = np.nanargmax(res)
-        avg[p] = avg[p] + 1
-    print(avg)
+    """pick which pretrained model to load"""
+    m = load_model("model_alex_MNIST.h5")
 
-    # new = np.average(np.array(avg))
-    # plt.imshow(new, cmap=plt.get_cmap('gray'))
-    # plt.show()
+    """generate and display the 10 classification images"""
+    """also generates the confusion matrix of the chosen model given the classification images"""
+    w = 10
+    h = 10
+    fig_classification = plt.figure(1, figsize=(10, 5))
+    columns = 5
+    rows = 2
+    confusion_matrix = []
+
+    for i in range(0, 10):
+        img = generate_classification_image(i)
+        fig_classification.add_subplot(rows, columns, i+1)
+        plt.imshow(img, cmap=plt.get_cmap('cool'))
+        img = tf.expand_dims(img, axis=0)
+        p = m.predict(img)
+        print(p)
+        confusion_matrix.append(p[0])
+    plt.matshow(confusion_matrix, cmap=plt.get_cmap('summer'))
+    for j in range(0, 10):
+        for k in range(0, 10):
+            c = confusion_matrix[k][j]
+            plt.text(j, k, str(round(c, 3)), va='center', ha='center', size=8)
+
+    plt.show()
