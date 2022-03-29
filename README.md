@@ -22,3 +22,27 @@ For the LeNet CNN:
 ![alt text](part3_imgs/cm_lenet_mnist.png "le MNIST")
 ![alt text](part3_imgs/cm_lenet_fashion_mnist.png "le FashionMNIST")
 The exact steps of generating these confusion matrices are within the main function in main.py
+
+Part 4: \
+I did the Spike Triggered Analysis by visualizing model outputs of real data and also randomly generated noises from the first and last convolution layers.
+- AlexNet with MNIST \
+  Random noise       | Real data
+  :-------------------------:|:-------------------------:
+  ![alt_text](part4_imgs/convLast_alex_mnist_noise.png)   |  ![alt_text](part4_imgs/convLast_alex_mnist.png)
+  ![alt_text](part4_imgs/conv1_alex_mnist_noise.png)|  ![alt_text](part4_imgs/conv1_alex_mnist.png)
+- AlexNet with FashionMNIST \
+  Random noise | Real data
+  :-------------------------:|:-------------------------:
+  ![alt_text](part4_imgs/convLast_alex_fashion_noise.png)|  ![alt_text](part4_imgs/convLast_alex_fashion.png)
+  ![alt_text](part4_imgs/conv1_alex_fashion_noise.png)|  ![alt_text](part4_imgs/conv1_alex_fashion.png)
+    
+- LeNet with MNIST \
+  Random noise | Real data
+  :-------------------------:|:-------------------------:
+  ![alt_text](part4_imgs/convLast_le_mnist_noise.png)|  ![alt_text](part4_imgs/convLast_le_mnist.png)
+  ![alt_text](part4_imgs/conv1_le_mnist_noise.png)|  ![alt_text](part4_imgs/conv1_le_mnist.png)
+- AlexNet with FashionMNIST \
+  Random noise | Real data
+  :-------------------------:|:-------------------------:
+  ![alt_text](part4_imgs/convLast_le_fashion_noise.png)|  ![alt_text](part4_imgs/convLast_le_fashion.png)
+  ![alt_text](part4_imgs/conv1_le_fashion_noise.png)|  ![alt_text](part4_imgs/conv1_le_fashion.png)
